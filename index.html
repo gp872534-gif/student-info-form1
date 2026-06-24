@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Information Form</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e1f1f1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    width: 400px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+h1 {
+    color: #001b91;
+    text-align: center;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 12px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+}
+
+input:focus, textarea:focus {
+    border-color: #001b91;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #001b91;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0033cc;
+}
+
+.error {
+    color: red;
+    font-size: 13px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+.success {
+    color: green;
+    text-align: center;
+    margin-top: 10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Student Information Form</h1>
+
+<form id="studentForm">
+
+<label>Student Name</label>
+<input type="text" id="name">
+<div class="error" id="nameError"></div>
+
+<label>Address</label>
+<textarea id="address"></textarea>
+<div class="error" id="addressError"></div>
+
+<label>ABC ID (12 digits)</label>
+<input type="text" id="abcid">
+<div class="error" id="abcidError"></div>
+
+<label>Phone Number (10 digits)</label>
+<input type="text" id="phone">
+<div class="error" id="phoneError"></div>
+
+<label>Date of Birth</label>
+<input type="date" id="dob">
+<div class="error" id="dobError"></div>
+
+<label>Class</label>
+<input type="text" id="className">
+<div class="error" id="classError"></div>
+
+<button type="submit">Submit</button>
+
+<div id="message"></div>
+
+</form>
+
+</div>
+
+<script>
+
+document.getElementById("studentForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let isValid = true;
+
+    let name = document.getElementById("name").value.trim();
+    let address = document.getElementById("address").value.trim();
+    let abcid = document.getElementById("abcid").value.trim();
+    let phone = document.getElementById("phone").value.trim();
+    let dob = document.getElementById("dob").value;
+    let className = document.getElementById("className").value.trim();
+
+    // Reset errors
+    document.querySelectorAll(".error").forEach(el => el.innerHTML = "");
+
+    if(name === ""){
+        document.getElementById("nameError").innerText = "Name is required";
+        isValid = false;
+    }
+
+    if(address === ""){
+        document.getElementById("addressError").innerText = "Address is required";
+        isValid = false;
+    }
+
+    if(!/^\d{12}$/.test(abcid)){
+        document.getElementById("abcidError").innerText = "ABC ID must be 12 digits";
+        isValid = false;
+    }
+
+    if(!/^\d{10}$/.test(phone)){
+        document.getElementById("phoneError").innerText = "Phone must be 10 digits";
+        isValid = false;
+    }
+
+    if(dob === ""){
+        document.getElementById("dobError").innerText = "Date of Birth required";
+        isValid = false;
+    }
+
+    if(className === ""){
+        document.getElementById("classError").innerText = "Class is required";
+        isValid = false;
+    }
+
+    if(!isValid) return;
+
+    let data = {
+        name,
+        address,
+        abcid,
+        phone,
+        dob,
+        className
+    };
+
+    fetch("https://script.google.com/macros/s/AKfycbzIps-ntREgDbUSK7K3J3_oktg85JVirLmdRl9f32Rt6cISpKWtREXmOB0A3P1xTh3fOg/exec", {
+        method: "POST",
+        body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(response => {
+        document.getElementById("message").innerHTML =
+            "<p class='success'>Data saved successfully!</p>";
+
+        document.getElementById("studentForm").reset();
+    })
+    .catch(error => {
+        document.getElementById("message").innerHTML =
+            "<p class='error'>Error saving data</p>";
+        console.log(error);
+    });
+
+});
+
+</script>
+
+</body>
+</html>
